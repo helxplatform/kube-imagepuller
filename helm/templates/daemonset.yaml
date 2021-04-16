@@ -13,8 +13,8 @@ spec:
     spec:
       initContainers:
       - name: init-puller
-        image: {{ .Values.initPuller.image }}
-        command: 
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        command:
           {{- range .Values.initPuller.command }}
           - {{ . | quote }}
           {{- end }}

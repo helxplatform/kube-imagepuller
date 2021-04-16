@@ -1,0 +1,20 @@
+image:
+  repository: helxplatform/skopeo
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  # tag: 0.0.1
+
+initPuller:
+  command:
+    - skopeo
+    - copy
+  secretMountPath: "/root"
+  secretProjection: .docker/config.json
+src:
+  image: "docker://index.docker.io/from/this:tag"
+  pullSecret:
+    enabled: false
+    name: regcred
+    key: .dockerconfigjson
+dst:
+  image: "docker-daemon:to/that:tag"
