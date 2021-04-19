@@ -12,12 +12,14 @@ helm repo add kube-imagepuller https://helxplatform.github.io/kube-imagepuller/c
 
 Pull a public image from Docker Hub:
 ```
-helm install imagepuller kube-imagepuller/imagepuller --set src.image=docker://index.docker.io/itaysk/cyan:blue --set dst.image=docker-daemon:itaysk/cyan:blue
+helm install imagepuller kube-imagepuller/imagepuller \
+    --set "initPuller.args={copy-images,-i,itaysk/cyan:blue}"
 ```
 
-Pull and rename:
+Pull public images from Docker Hub:
 ```
-helm install imagepuller kube-imagepuller/imagepuller --set src.image=docker://index.docker.io/itaysk/cyan:blue --set dst.image=docker-daemon:myorg/mycyan:v1
+helm install imagepuller kube-imagepuller/imagepuller \
+    --set "initPuller.args={copy-images,-i,itaysk/cyan:blue,-i,itaysk/cyan:red}"
 ```
 
 Pull a private image from Docker Hub. This assumes a Kubernetes :
@@ -25,7 +27,16 @@ Pull a private image from Docker Hub. This assumes a Kubernetes :
 ```
 kubectl create secret docker-registry regcred --docker-username=itaysk --docker-password='***'
 
-helm install imagepuller kube-imagepuller/imagepuller --set src.image=docker://index.docker.io/itaysk/private:latest --set dst.image=docker-daemon:itaysk/private:latest --set src.pullSecret.enabled=true
+helm install imagepuller kube-imagepuller/imagepuller \
+    --set "initPuller.args={copy-images,-i,itaysk/cyan:blue}" \
+    --set initPuller.pullSecret.enabled=true
+```
+
+Pull and rename a public image from Docker Hub (the run-skopeo.sh script passes
+these args directly to the skopeo executable):
+```
+helm install imagepuller kube-imagepuller/imagepuller \
+    --set "initPuller.args={copy,docker://index.docker.io/itaysk/cyan:blue,docker-daemon:myorg/mycyan:v1}"
 ```
 
 {{ template "chart.requirementsSection" . }}

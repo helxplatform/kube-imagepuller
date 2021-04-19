@@ -5,16 +5,21 @@ image:
   # tag: 0.0.1
 
 initPuller:
-  command:
-    - skopeo
-    - copy
+  args:
+    - copy-images
+    - "-i"
+    - "from/this:tag"
+    - "-i"
+    - "from/that:tag"
+    # - "--src-transport"
+    # - "docker"
+    # - "--src-prefix"
+    # - "//index.docker.io/"
+    # - "--dst-transport"
+    # - "docker-daemon"
   secretMountPath: "/root"
   secretProjection: .docker/config.json
-src:
-  image: "docker://index.docker.io/from/this:tag"
   pullSecret:
     enabled: false
     name: regcred
     key: .dockerconfigjson
-dst:
-  image: "docker-daemon:to/that:tag"
