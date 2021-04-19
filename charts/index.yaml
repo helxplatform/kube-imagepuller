@@ -2,8 +2,18 @@ apiVersion: v1
 entries:
   imagepuller:
   - apiVersion: v1
+    appVersion: 0.1.2
+    created: "2021-04-19T17:51:05.284122-04:00"
+    description: Pull container images to your nodes so that they are already present when containers are launched.
+    digest: 34969d59d274ce80b5c9ac9d21f7ad2c8e00b28f9f0971220a359ea34d48cfab
+    name: imagepuller
+    type: application
+    urls:
+    - https://helxplatform.github.io/kube-imagepuller/charts/imagepuller-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v1
     appVersion: 0.1.1
-    created: "2021-04-16T16:13:08.547264-04:00"
+    created: "2021-04-19T17:51:05.283639-04:00"
     description: Pull container images to your nodes so that they are already present when containers are launched.
     digest: a9313542850451bc22d1a7886ce6cc13ca4012ff754c87cc368c83d6c196534b
     name: imagepuller
@@ -11,4 +21,4 @@ entries:
     urls:
     - https://helxplatform.github.io/kube-imagepuller/charts/imagepuller-0.1.1.tgz
     version: 0.1.1
-generated: "2021-04-16T16:13:08.543775-04:00"
+generated: "2021-04-19T17:51:05.281511-04:00"
