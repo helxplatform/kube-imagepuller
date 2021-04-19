@@ -14,16 +14,15 @@ spec:
       initContainers:
       - name: init-puller
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-        command:
-          {{- range .Values.initPuller.command }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        args:
+          {{- range .Values.initPuller.args }}
           - {{ . | quote }}
           {{- end }}
-          - {{ .Values.src.image | quote }}
-          - {{ .Values.dst.image | quote }}
         volumeMounts:
         - name: docker
           mountPath: /var/run/docker.sock
-        {{- if .Values.src.pullSecret.enabled }}
+        {{- if .Values.initPuller.pullSecret.enabled }}
         - name: pullsecret
           mountPath: {{ .Values.initPuller.secretMountPath }}
           readOnly: true
@@ -32,12 +31,12 @@ spec:
       - name: docker
         hostPath:
           path: /var/run/docker.sock
-      {{- if .Values.src.pullSecret.enabled }}
+      {{- if .Values.initPuller.pullSecret.enabled }}
       - name: pullsecret
         secret:
-          secretName: {{ .Values.src.pullSecret.name }}
+          secretName: {{ .Values.initPuller.pullSecret.name }}
           items:
-          - key: {{ .Values.src.pullSecret.key }}
+          - key: {{ .Values.initPuller.pullSecret.key }}
             path: {{ .Values.initPuller.secretProjection }}
       {{- end }}
       containers:

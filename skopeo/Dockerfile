@@ -1,6 +1,6 @@
 FROM alpine
 
 USER root
-RUN apk add skopeo
-
-ENTRYPOINT [ "/usr/bin/skopeo"]
+RUN apk add bash skopeo
+COPY ./run-skopeo.sh /
+ENTRYPOINT [ "/run-skopeo.sh"]
