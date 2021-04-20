@@ -6,19 +6,36 @@ image:
 
 initPuller:
   args:
-    - copy-images
-    - "-i"
-    - "from/this:tag"
-    - "-i"
-    - "from/that:tag"
-    # - "--src-transport"
-    # - "docker"
-    # - "--src-prefix"
-    # - "//index.docker.io/"
-    # - "--dst-transport"
-    # - "docker-daemon"
+    # -- Currently the only non-scopio command is 'copy-images', run-scopio.sh
+    # will forward any other command and remaining arguments directly to scopio.
+    mainCommand: copy-images
+    # -- A list of images to be copied by multiple calls to scopio with the
+    # run-scopio.sh script.
+    images:
+      - "from/this:tag"
+      - "from/that:tag"
+    # -- Arguments for run-scopio.sh script not sent directly to scopio.
+    # Default values are below.
+    nonImageArgs:
+      - "--src-transport"
+      - "docker"
+      - "--src-prefix"
+      - "//index.docker.io/"
+      - "--dst-transport"
+      - "docker-daemon"
+      # Any arguments after "--" will be used as global options for scopio in
+      # run-scopio.sh.
+      - "--"
+      - "--command-timeout"
+      - "0"
+    # -- Arguments for scopio if you are using one of the regular scopio
+    # commands.
+    scopioArgs: {}
   secretMountPath: "/root"
   secretProjection: .docker/config.json
+  # -- You can specify a secret to use for pulling images.  The default service
+  # account's registry credentials are not used since the copy is done through
+  # /var/run/docker.sock.
   pullSecret:
     enabled: false
     name: regcred

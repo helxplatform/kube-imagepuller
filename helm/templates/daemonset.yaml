@@ -16,7 +16,16 @@ spec:
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         args:
-          {{- range .Values.initPuller.args }}
+          - "{{ .Values.initPuller.args.mainCommand }}"
+          {{- range .Values.initPuller.args.images }}
+          - "-i"
+          - {{ . | quote }}
+          {{- end }}
+          {{- range .Values.initPuller.args.nonImageArgs }}
+          - {{ . | quote }}
+          {{- end }}
+          # scopioArgs really isn't needed, but sounds better than using nonImageArgs.
+          {{- range .Values.initPuller.args.scopioArgs }}
           - {{ . | quote }}
           {{- end }}
         volumeMounts:

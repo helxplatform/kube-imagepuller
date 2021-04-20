@@ -19,7 +19,7 @@ helm install imagepuller kube-imagepuller/imagepuller \
 Pull public images from Docker Hub:
 ```
 helm install imagepuller kube-imagepuller/imagepuller \
-    --set "initPuller.args={copy-images,-i,itaysk/cyan:blue,-i,itaysk/cyan:red}"
+    --set "initPuller.args.images={itaysk/cyan:blue,itaysk/cyan:red}"
 ```
 
 Pull a private image from Docker Hub. This assumes a Kubernetes :
@@ -28,7 +28,7 @@ Pull a private image from Docker Hub. This assumes a Kubernetes :
 kubectl create secret docker-registry regcred --docker-username=itaysk --docker-password='***'
 
 helm install imagepuller kube-imagepuller/imagepuller \
-    --set "initPuller.args={copy-images,-i,itaysk/cyan:blue}" \
+    --set "initPuller.args.images={itaysk/cyan:blue}" \
     --set initPuller.pullSecret.enabled=true
 ```
 
@@ -36,7 +36,7 @@ Pull and rename a public image from Docker Hub (the run-skopeo.sh script passes
 these args directly to the skopeo executable):
 ```
 helm install imagepuller kube-imagepuller/imagepuller \
-    --set "initPuller.args={copy,docker://index.docker.io/itaysk/cyan:blue,docker-daemon:myorg/mycyan:v1}"
+    --set "initPuller.args.mainCommand=copy,initPuller.args.scopioArgs={docker://index.docker.io/itaysk/cyan:blue,docker-daemon:myorg/mycyan:v1}"
 ```
 
 {{ template "chart.requirementsSection" . }}
