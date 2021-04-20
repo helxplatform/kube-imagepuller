@@ -2,7 +2,7 @@
 
 Pull container images to your nodes so that they are already present when containers are launched.
 
-![Version: 0.1.2](https://img.shields.io/badge/Version-0.1.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.2](https://img.shields.io/badge/AppVersion-0.1.2-informational?style=flat-square)
+![Version: 0.2.0](https://img.shields.io/badge/Version-0.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.3](https://img.shields.io/badge/AppVersion-0.1.3-informational?style=flat-square)
 
 ## Installation and configuration
 
@@ -20,7 +20,7 @@ helm install imagepuller kube-imagepuller/imagepuller \
 Pull public images from Docker Hub:
 ```
 helm install imagepuller kube-imagepuller/imagepuller \
-    --set "initPuller.args={copy-images,-i,itaysk/cyan:blue,-i,itaysk/cyan:red}"
+    --set "initPuller.args.images={itaysk/cyan:blue,itaysk/cyan:red}"
 ```
 
 Pull a private image from Docker Hub. This assumes a Kubernetes :
@@ -29,7 +29,7 @@ Pull a private image from Docker Hub. This assumes a Kubernetes :
 kubectl create secret docker-registry regcred --docker-username=itaysk --docker-password='***'
 
 helm install imagepuller kube-imagepuller/imagepuller \
-    --set "initPuller.args={copy-images,-i,itaysk/cyan:blue}" \
+    --set "initPuller.args.images={itaysk/cyan:blue}" \
     --set initPuller.pullSecret.enabled=true
 ```
 
@@ -37,7 +37,7 @@ Pull and rename a public image from Docker Hub (the run-skopeo.sh script passes
 these args directly to the skopeo executable):
 ```
 helm install imagepuller kube-imagepuller/imagepuller \
-    --set "initPuller.args={copy,docker://index.docker.io/itaysk/cyan:blue,docker-daemon:myorg/mycyan:v1}"
+    --set "initPuller.args.mainCommand=copy,initPuller.args.scopioArgs={docker://index.docker.io/itaysk/cyan:blue,docker-daemon:myorg/mycyan:v1}"
 ```
 
 ## Values
@@ -46,14 +46,11 @@ helm install imagepuller kube-imagepuller/imagepuller \
 |-----|------|---------|-------------|
 | image.pullPolicy | string | `"IfNotPresent"` |  |
 | image.repository | string | `"helxplatform/skopeo"` |  |
-| initPuller.args[0] | string | `"copy-images"` |  |
-| initPuller.args[1] | string | `"-i"` |  |
-| initPuller.args[2] | string | `"from/this:tag"` |  |
-| initPuller.args[3] | string | `"-i"` |  |
-| initPuller.args[4] | string | `"from/that:tag"` |  |
-| initPuller.pullSecret.enabled | bool | `false` |  |
-| initPuller.pullSecret.key | string | `".dockerconfigjson"` |  |
-| initPuller.pullSecret.name | string | `"regcred"` |  |
+| initPuller.args.images | list | `["from/this:tag","from/that:tag"]` | A list of images to be copied by multiple calls to scopio with the run-scopio.sh script. |
+| initPuller.args.mainCommand | string | `"copy-images"` | Currently the only non-scopio command is 'copy-images', run-scopio.sh will forward any other command and remaining arguments directly to scopio. |
+| initPuller.args.nonImageArgs | list | `["--src-transport","docker","--src-prefix","//index.docker.io/","--dst-transport","docker-daemon","--","--command-timeout","0"]` | Arguments for run-scopio.sh script not sent directly to scopio. Default values are below. |
+| initPuller.args.scopioArgs | object | `{}` | Arguments for scopio if you are using one of the regular scopio commands. |
+| initPuller.pullSecret | object | `{"enabled":false,"key":".dockerconfigjson","name":"regcred"}` | You can specify a secret to use for pulling images.  The default service account's registry credentials are not used since the copy is done through /var/run/docker.sock. |
 | initPuller.secretMountPath | string | `"/root"` |  |
 | initPuller.secretProjection | string | `".docker/config.json"` |  |
 

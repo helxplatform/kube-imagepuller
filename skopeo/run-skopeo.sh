@@ -79,7 +79,7 @@ then
           ;;
         --)
           SKOPEO_GLOBAL_ARGS="${@:2}"
-          shift $#
+          break
           ;;
         *)
           # unknown option
@@ -111,10 +111,14 @@ then
     SRC_IMAGE=$SRC_TRANSPORT:$SRC_PREFIX$IMAGE
     DST_IMAGE=$DST_TRANSPORT:$IMAGE
     echo "copying $SRC_IMAGE to $DST_IMAGE"
-    $SKOPEO_BIN $SKOPEO_GLOBAL_ARGS copy $SRC_IMAGE $DST_IMAGE
+    SKOPEO_COMMAND="$SKOPEO_BIN $SKOPEO_GLOBAL_ARGS copy $SRC_IMAGE $DST_IMAGE"
+    echo "running: \"$SKOPEO_COMMAND\""
+    /bin/bash -c $SKOPEO_COMMAND
     echo "copied $SRC_IMAGE to $DST_IMAGE"
     echo
   done
 else
-  $SKOPEO_BIN $@
+  SKOPEO_COMMAND="$SKOPEO_BIN $@"
+  echo "running: \"$SKOPEO_COMMAND\""
+  /bin/bash -c $SKOPEO_COMMAND
 fi
